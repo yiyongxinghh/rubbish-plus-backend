@@ -5,6 +5,7 @@ import { Pic } from 'src/pic/entities/pic.entity';
 import { Comment } from 'src/comment/entities/comment.entity';
 import { Order } from 'src/order/entities/order.entity';
 import { OrderToGarbage } from 'src/order-to-garbage/entities/order-to-garbage.entity';
+import { CollectionToGarbage } from 'src/collection-to-garbage/entities/collection-to-garbage.entity';
 
 @Entity()
 export class Garbage {
@@ -47,4 +48,7 @@ export class Garbage {
 
     @OneToMany(()=>OrderToGarbage,orderToGarbage=>orderToGarbage.garbage)
     orderToGarbage: OrderToGarbage[] // 订单包含的垃圾列表
+
+    @OneToMany(() => CollectionToGarbage, collectionToGarbage => collectionToGarbage.garbage)
+    collectionToGarbages: CollectionToGarbage[]; // 垃圾被收集的订单列表
 }

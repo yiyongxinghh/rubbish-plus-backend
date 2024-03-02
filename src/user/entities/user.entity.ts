@@ -1,10 +1,11 @@
-import { Entity, Column, PrimaryGeneratedColumn, OneToMany, OneToOne, JoinColumn } from 'typeorm';
+import { Entity, Column, PrimaryGeneratedColumn, OneToMany, OneToOne, JoinColumn} from 'typeorm';
 import { Code } from '../../code/entities/code.entity';
 import { Pic } from 'src/pic/entities/pic.entity';
 import { Garbage } from 'src/garbage/entities/garbage.entity';
 import { Comment } from 'src/comment/entities/comment.entity';
 import { Message } from 'src/message/entities/message.entity';
 import { Order } from 'src/order/entities/order.entity';
+import { Collection } from 'src/collection/entities/collection.entity';
 
 @Entity()
 export class User {
@@ -53,6 +54,9 @@ export class User {
     @OneToOne(() => Pic, pic => pic.user)
     @JoinColumn({ name: "pic_id"})
     pic: Pic
+
+    @OneToOne(()=>Collection, collection => collection.user)
+    collection: Collection
 
     @OneToMany(() => Garbage, garbage => garbage.user)
     garbages: Garbage[]

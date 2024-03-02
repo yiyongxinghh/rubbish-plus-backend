@@ -17,6 +17,8 @@ import { EventsModule } from './events/events.module';
 import { MessageModule } from './message/message.module';
 import { OrderModule } from './order/order.module';
 import { OrderToGarbageModule } from './order-to-garbage/order-to-garbage.module';
+import { CollectionModule } from './collection/collection.module';
+import { CollectionToGarbageModule } from './collection-to-garbage/collection-to-garbage.module';
 
 
 @Module({
@@ -46,7 +48,9 @@ import { OrderToGarbageModule } from './order-to-garbage/order-to-garbage.module
     EventsModule,
     MessageModule,
     OrderModule,
-    OrderToGarbageModule
+    OrderToGarbageModule,
+    CollectionModule,
+    CollectionToGarbageModule
   ],
   controllers: [AppController],
   providers: [AppService, {

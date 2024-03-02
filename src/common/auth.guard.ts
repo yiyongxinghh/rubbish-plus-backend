@@ -10,9 +10,10 @@ export class AuthGuard implements CanActivate {
     // 实例化 jwtService
     constructor(private jwtService: JwtService, private reflector: Reflector) { }
 
-    async canActivate(
-        context: ExecutionContext,
-    ): Promise<boolean> {
+    // 验证token
+    async canActivate(context: ExecutionContext,): Promise<boolean> {
+
+        // 获取请求
         const isPublic = this.reflector.getAllAndOverride<boolean>(IS_PUBLIC_KEY, [
             context.getHandler(),
             context.getClass(),
@@ -24,9 +25,7 @@ export class AuthGuard implements CanActivate {
 
         // 获取请求的内容
         const request = context.switchToHttp().getRequest();
-        // console.log(request)
         const token = this.extractTokenFromHeader(request);
-        // console.log(token)
         if (!token) {
             console.log("token 验证没有通过")
             throw new UnauthorizedException();
