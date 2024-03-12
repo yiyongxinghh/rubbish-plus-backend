@@ -19,19 +19,30 @@ export class CollectionToGarbageService {
       .values(createCollectionToGarbageDto).execute();
   }
 
-
+  /**
+   * 根据指定的收藏夹id来获取所有的废品
+   * @param collectionId 
+   * @returns 
+   */
   findAll(collectionId: number) {
     return this.collectionToGarbage.createQueryBuilder('collectionToGarbage')
-      .where('collectionToGarbage.collection=:collectionId',{collectionId})
+      .leftJoinAndSelect('collectionToGarbage.garbage', 'garbage')
+      .leftJoinAndSelect('garbage.pic', 'pic')
+      .where('collectionToGarbage.collection=:collectionId', { collectionId })
       .getMany();
   }
 
 
-  update(id: number, updateCollectionToGarbageDto: UpdateCollectionToGarbageDto) {
-    return `This action updates a #${id} collectionToGarbage`;
-  }
-
-  remove(id: number) {
-    return `This action removes a #${id} collectionToGarbage`;
+  /**
+   * 根据指定的收藏夹id,删除其中的指定废品id
+   * @param collectionId 
+   * @param garbageId 
+   * @returns 
+   */
+  remove(collectionId: number, garbageId: number) {
+    return this.collectionToGarbage.createQueryBuilder().delete().from(CollectionToGarbage)
+      .where('collectionCollectionId=:collectionId', { collectionId })
+      .andWhere('garbageGarbageId=:garbageId', { garbageId })
+      .execute();
   }
 }

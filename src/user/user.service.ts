@@ -82,8 +82,14 @@ export class UserService {
    * @param updateUserDto 
    * @returns 
    */
-  update(id: number, updateUserDto: UpdateUserDto) {
-    return this.user.createQueryBuilder().update(User).set(updateUserDto).where("user_id = :id", { id }).execute();
+  update(id: number, updateUserDto: UpdateUserDto, field?: string) {
+    if (field) {
+      const updateField = { [field]: updateUserDto[field] };
+      return this.user.createQueryBuilder().update(User).set(updateField)
+          .where("user_id = :id", { id }).execute();
+    } else {
+      return this.user.createQueryBuilder().update(User).set(updateUserDto).where("user_id = :id", { id }).execute();
+    }
   }
 
   /**
@@ -110,7 +116,9 @@ export class UserService {
    * @returns 
    */
   findUserEmail(userEmail: string) {
-    return this.user.createQueryBuilder().where("user_email = :userEmail", { userEmail }).getOne();
+    return this.user.createQueryBuilder("user")
+      .leftJoinAndSelect("user.pic", "pic")
+      .where("user_email = :userEmail", { userEmail }).getOne();
   }
 
   /**

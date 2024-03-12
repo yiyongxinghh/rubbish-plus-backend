@@ -48,14 +48,21 @@ export class UserController {
   }
 
   @Patch(':id')
-  async update(@Param('id') id: string, @Body() updateUserDto: UpdateUserDto) {
-    updateUserDto.userPass = await bcrypt.hash(updateUserDto.userPass, salt.saltRounds);
-    try {
-      await this.userService.update(+id, updateUserDto)
+  async update(@Param('id') id: string, @Body('user') updateUserDto: UpdateUserDto, @Body('field') field?: string) {
+    if (field) {
+      await this.userService.update(+id, updateUserDto, field)
+      console.log(1);
       return { message: '修改成功' }
-    } catch (error) {
-      throw new HttpException({ message: `修改出现异常——${error.message}` }, 500)
+    } else {
+      updateUserDto.userPass = await bcrypt.hash(updateUserDto.userPass, salt.saltRounds);
+      try {
+        await this.userService.update(+id, updateUserDto)
+        return { message: '修改成功' }
+      } catch (error) {
+        throw new HttpException({ message: `修改出现异常——${error.message}` }, 500)
+      }
     }
+
   }
 
   @Delete(':id')
