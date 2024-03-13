@@ -3,12 +3,18 @@ import { GarbageService } from './garbage.service';
 import { CreateGarbageDto } from './dto/create-garbage.dto';
 import { UpdateGarbageDto } from './dto/update-garbage.dto';
 import { OrderToGarbageService } from 'src/order-to-garbage/order-to-garbage.service';
+import * as dayjs from 'dayjs'
 
 @Controller('garbage')
 export class GarbageController {
   constructor(private readonly garbageService: GarbageService,
     private readonly orderToGarbageService: OrderToGarbageService,) { }
 
+  /**
+   * POST 创建废品
+   * @param createGarbageDto 
+   * @returns 
+   */
   @Post()
   create(@Body() createGarbageDto: CreateGarbageDto) {
     console.log(createGarbageDto);
@@ -57,11 +63,6 @@ export class GarbageController {
     return this.garbageService.update(+id, updateGarbageDto);
   }
 
-  @Patch(':id')
-  updateBatch(@Body() updateGarbageDtos: UpdateGarbageDto[]) {
-    return this.garbageService.updateBatch(updateGarbageDtos);
-  }
-
   @Delete(':id')
   remove(@Param('id') id: string) {
     return this.garbageService.remove(+id);
@@ -93,7 +94,7 @@ export class GarbageController {
   }
 
   /**
-   * 获取所有废品销量
+   * POST 获取所有废品销量
    * @returns 
    */
   @Post('findAllGarbageQuantity')
@@ -102,7 +103,49 @@ export class GarbageController {
   }
 
   /**
-   * 获取热门废品
+   * POST 根据指定id获取指定废品销量
+   * @returns 
+   */
+  @Post('findOneGarbageQuantity/:id')
+  async findOneGarbageQuantity(@Param('id') id: number) {
+    const data = await this.garbageService.findOneGarbageQuantity(id);
+    data.orderToGarbage.sort((a, b) => {
+      // 将日期字符串解析为 Day.js 对象
+      const dateA = dayjs(a.order.orderDate);
+      const dateB = dayjs(b.order.orderDate);
+      // 比较日期对象的时间戳
+      return dateA.valueOf() - dateB.valueOf();
+    });
+    // 创建一个空对象来跟踪每一天的总数量
+    const mergedData = {};
+
+    // 遍历原始数组，并根据日期合并数据
+    data.orderToGarbage.forEach(element => {
+      const currentDate = dayjs(element.order.orderDate).format('YYYY-MM-DD');
+
+      if (mergedData[currentDate]) {
+        // 如果当前日期已经存在于对象中，则将当前元素的数量添加到现有的数量上
+        mergedData[currentDate] += element.garbageQuantity;
+      } else {
+        // 如果当前日期不存在于对象中，则将当前日期作为键，当前元素的数量作为值添加到对象中
+        mergedData[currentDate] = element.garbageQuantity;
+      }
+    });
+
+    // 将对象的值转换为数组形式
+    const mergedArray = Object.keys(mergedData).map(date => ({
+      currentDate: date,
+      garbageQuantity: mergedData[date]
+    }));
+
+    // 将处理后的数组赋值回原始数组
+    data.orderToGarbage = mergedArray as any;
+
+    return data
+  }
+
+  /**
+   * POST 获取热门废品
    * @returns 
    */
   @Post('hot')
