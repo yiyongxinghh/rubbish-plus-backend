@@ -56,7 +56,24 @@ export class CommentController {
     return { comments, total }
   }
 
+  /**
+   * GET 求指定废品id平均评分
+   * @param id 
+   * @returns 
+   */
+  @Get('/avg')
+  async findAverageScore(@Query('id') id: number) {
+    return this.commentService.findAverageScore(id);
+  }
 
+  /**
+   * GET 根据废品分类的评论依次统计评论总数
+   * @returns 
+   */
+  @Get('/total')
+  async getCategoryCommentTotals() {
+    return this.commentService.getCategoryCommentTotals();
+  }
 
   /**
    * POST 根据起始时间范围，获取区间所有评论

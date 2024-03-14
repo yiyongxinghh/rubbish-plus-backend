@@ -19,11 +19,27 @@ export class CollectionToGarbageService {
       .values(createCollectionToGarbageDto).execute();
   }
 
-
+  /**
+   * 根据指定的收藏id获取所有收藏列
+   * @param collectionId 
+   * @returns 
+   */
   findAll(collectionId: number) {
     return this.collectionToGarbage.createQueryBuilder('collectionToGarbage')
       .where('collectionToGarbage.collection=:collectionId',{collectionId})
       .getMany();
+  }
+
+  /**
+   * 根据指定废品id，得到收藏总数
+   * @param garbageId 
+   * @returns 
+   */
+  findGarbageCount(garbageId: number) {
+    return this.collectionToGarbage.createQueryBuilder('collectionToGarbage')
+    
+      .where('collectionToGarbage.garbage=:garbageId',{garbageId})
+      .getCount();
   }
 
 

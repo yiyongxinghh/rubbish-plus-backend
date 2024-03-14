@@ -24,8 +24,14 @@ export class OrderController {
     return this.orderService.findUserAllOrder(userId, userRank, page, pageSize);
   }
 
-
-
+  /**
+   * GET 获取订单总数量
+   * @returns 
+   */
+  @Get('count')
+  getTotal(){
+    return this.orderService.getTotal();
+  }
 
   @Get(':id')
   findOne(@Param('id') id: string) {

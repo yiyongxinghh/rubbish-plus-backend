@@ -51,6 +51,19 @@ export class CommentService {
     else { return this.comment.createQueryBuilder().where('garbage_id = :id', { id }).orderBy('comment_time', 'DESC').getMany(); }
   }
 
+
+  /**
+   * 求指定废品id平均评分
+   * @param id 
+   * @returns 
+   */
+  findAverageScore(id:number){
+    return this.comment.createQueryBuilder()
+    .select('AVG(comment_score)', 'average_score')
+    .where('garbage_id = :id', { id })
+    .groupBy('garbage_id').getRawOne()
+  }
+
   /**
    * 根据起始时间范围，获取区间所有评论
    * @param start 
@@ -101,5 +114,19 @@ export class CommentService {
     else {
       return this.comment.createQueryBuilder().getCount() // 获取总数量
     }
+  }
+
+  /**
+   * 根据废品分类的评论依次统计评论总数
+   * @returns 
+   */
+  getCategoryCommentTotals(){
+    return this.comment.createQueryBuilder('comment')
+      .leftJoinAndSelect('comment.garbage', 'garbage')
+      .leftJoinAndSelect('garbage.category', 'category')
+      .select('COUNT(*)','total')
+      .addSelect('category.categoryName','categoryName')
+      .groupBy('category.categoryId')
+      .getRawMany();
   }
 }
