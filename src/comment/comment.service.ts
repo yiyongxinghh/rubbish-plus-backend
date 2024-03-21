@@ -30,6 +30,24 @@ export class CommentService {
   }
 
   /**
+   * 根据指定的用户id，获取其发送的所有评论
+   * @param userId 
+   * @returns 
+   */
+  findAllUser(userId:number){
+    return this.comment.createQueryBuilder().where('user_id = :userId', { userId }).getMany();
+  }
+
+  /**
+   * 根据指定的废品id，获取其相关的所有评论
+   * @param garbageId 
+   * @returns 
+   */
+  findAllGarbage(garbageId:number){
+    return this.comment.createQueryBuilder().where('garbage_id = :garbageId', { garbageId }).getMany();
+  }
+
+  /**
    * 获取最热评论，自带分页
    * @param page 
    * @param pageSize 

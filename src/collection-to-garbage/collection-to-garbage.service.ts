@@ -26,7 +26,7 @@ export class CollectionToGarbageService {
    */
   findAll(collectionId: number) {
     return this.collectionToGarbage.createQueryBuilder('collectionToGarbage')
-      .where('collectionToGarbage.collection=:collectionId',{collectionId})
+      .where('collectionToGarbage.collection=:collectionId', { collectionId })
       .getMany();
   }
 
@@ -37,8 +37,8 @@ export class CollectionToGarbageService {
    */
   findGarbageCount(garbageId: number) {
     return this.collectionToGarbage.createQueryBuilder('collectionToGarbage')
-    
-      .where('collectionToGarbage.garbage=:garbageId',{garbageId})
+
+      .where('collectionToGarbage.garbage=:garbageId', { garbageId })
       .getCount();
   }
 
@@ -47,7 +47,10 @@ export class CollectionToGarbageService {
     return `This action updates a #${id} collectionToGarbage`;
   }
 
-  remove(id: number) {
-    return `This action removes a #${id} collectionToGarbage`;
+  remove(garbageId: number,collectionId:number) {
+    return this.collectionToGarbage.createQueryBuilder('collectionToGarbage').delete()
+      .from(CollectionToGarbage).where('garbageGarbageId = :garbageId', { garbageId })
+      .andWhere('collectionCollectionId = :collectionId', { collectionId })
+      .execute();
   }
 }

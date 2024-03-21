@@ -44,8 +44,14 @@ export class CollectionToGarbageController {
     return this.collectionToGarbageService.update(+id, updateCollectionToGarbageDto);
   }
 
-  @Delete(':id')
-  remove(@Param('id') id: string) {
-    return this.collectionToGarbageService.remove(+id);
+  /**
+   * DELETE 通过指定的收藏夹id和废品id删除指定收藏夹中废品
+   * @param garbageId 
+   * @param collectionId 
+   * @returns 
+   */
+  @Delete()
+  remove(@Body('garbageId') garbageId: number,@Body('collectionId') collectionId: number) {
+    return this.collectionToGarbageService.remove(garbageId,collectionId);
   }
 }

@@ -31,6 +31,26 @@ export class CommentController {
   }
 
   /**
+   * GET 获取指定用户id，发送的所有评论
+   * @param userId 
+   * @returns 
+   */
+  @Get('/user')
+  findAllUser(@Query('userId') userId:number){
+    return this.commentService.findAllUser(userId)
+  }
+
+  /**
+   * GET 根据指定的废品id，获取其相关的所有评论
+   * @param garbageId 
+   * @returns 
+   */
+  @Get('/garbage')
+  findAllGarbage(@Query('garbageId') garbageId:number){
+    return this.commentService.findAllGarbage(garbageId)
+  }
+
+  /**
    * 
    * @param query 
    * @returns 

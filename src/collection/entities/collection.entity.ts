@@ -11,7 +11,7 @@ export class Collection {
     @Column({name:'collection_name'})
     collectionName: string;
     
-    @OneToOne(()=>User, user=>user.collection)
+    @ManyToOne(()=>User, user=>user.collections)
     @JoinColumn({ name: "user_id"})
     user: User;
     

@@ -1,15 +1,18 @@
-import { Controller, Get, Post, Body, Patch, Param, Delete, Query } from '@nestjs/common';
+import { Controller, Get, Post, Body, Patch, Param, Delete, Query, Req, Res } from '@nestjs/common';
 import { MessageService } from './message.service';
 import { CreateMessageDto } from './dto/create-message.dto';
 import { UpdateMessageDto } from './dto/update-message.dto';
+import { GoEasyHttpService } from '../events/goeasy.message'
 import * as dayjs from 'dayjs';
 
 @Controller('message')
 export class MessageController {
-  constructor(private readonly messageService: MessageService) { }
+  constructor(private readonly messageService: MessageService, private readonly goEasyHttpService: GoEasyHttpService) { }
 
   @Post()
-  create(@Body() createMessageDto: CreateMessageDto) {
+  async create(@Query('channel') channel:string,@Body() createMessageDto: CreateMessageDto) {
+    console.log(channel,createMessageDto);
+    await this.goEasyHttpService.sendMessage(channel,createMessageDto.messageContent)
     return this.messageService.create(createMessageDto);
   }
 

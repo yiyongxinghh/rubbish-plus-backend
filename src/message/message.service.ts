@@ -4,6 +4,7 @@ import { UpdateMessageDto } from './dto/update-message.dto';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Message } from './entities/message.entity';
 import { Repository } from 'typeorm';
+import GoEasy from 'goeasy'
 
 @Injectable()
 export class MessageService {
