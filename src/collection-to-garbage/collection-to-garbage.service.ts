@@ -44,6 +44,11 @@ export class CollectionToGarbageService {
       .getCount();
   }
 
+  update(id:number,updateCollectionToGarbageDto:UpdateCollectionToGarbageDto){
+    return this.collectionToGarbage.createQueryBuilder().update(CollectionToGarbage)
+    .set(updateCollectionToGarbageDto).where('collection_to_garbage_id=:id',{id})
+    .execute()
+  }
 
   /**
    * 根据指定的收藏夹id,删除其中的指定废品id
