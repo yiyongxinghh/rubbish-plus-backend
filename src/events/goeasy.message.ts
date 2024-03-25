@@ -7,7 +7,7 @@ export class GoEasyHttpService {
     constructor() {
     }
 
-    async sendMessage(channel: string, content: string) {
+    async sendMessage(channel: string, content: string,message) {
         const options = {
             hostname: "rest-hz.goeasy.io", //新加坡rest-host：rest-singapore.goeasy.io
             path: "/v2/pubsub/publish",
@@ -24,7 +24,7 @@ export class GoEasyHttpService {
             content: content,
         };
 
-        let result = "";
+        let result:any = "";
         const req = http.request(options, (res) => {
             console.log(res.statusCode);
 

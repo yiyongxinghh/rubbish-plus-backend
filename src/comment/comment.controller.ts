@@ -2,6 +2,7 @@ import { Controller, Get, Post, Body, Patch, Param, Delete, Query } from '@nestj
 import { CommentService } from './comment.service';
 import { CreateCommentDto } from './dto/create-comment.dto';
 import { UpdateCommentDto } from './dto/update-comment.dto';
+import { Public } from '../common/public.decorator'
 
 @Controller('comment')
 export class CommentController {
@@ -45,6 +46,7 @@ export class CommentController {
    * @param garbageId 
    * @returns 
    */
+  @Public()
   @Get('/garbage')
   findAllGarbage(@Query('garbageId') garbageId:number){
     return this.commentService.findAllGarbage(garbageId)

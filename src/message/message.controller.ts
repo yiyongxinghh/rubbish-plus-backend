@@ -12,8 +12,8 @@ export class MessageController {
   @Post()
   async create(@Query('channel') channel:string,@Body() createMessageDto: CreateMessageDto) {
     console.log(channel,createMessageDto);
-    await this.goEasyHttpService.sendMessage(channel,createMessageDto.messageContent)
-    return this.messageService.create(createMessageDto);
+    const data = await this.messageService.create(createMessageDto);
+    return await this.goEasyHttpService.sendMessage(channel,createMessageDto.messageContent,data)
   }
 
   /**

@@ -28,7 +28,7 @@ export class CollectionController {
    * @returns 
    */
   @Get(':id')
-  findAll(@Param('userId') userId: number) {
+  findAll(@Param('id') userId: number) {
     return this.collectionService.findAll(userId);
   }
 

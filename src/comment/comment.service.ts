@@ -25,8 +25,16 @@ export class CommentService {
    * @returns 
    */
   findAll(page: number, pageSize: number) {
-    if (page && pageSize) { return this.comment.createQueryBuilder().skip(pageSize * (page - 1)).take(pageSize).getMany(); }
-    else { return this.comment.createQueryBuilder().getMany(); }
+    if (page && pageSize) {
+      return this.comment.createQueryBuilder('comment')
+        .leftJoinAndSelect('comment.user', 'user')
+        .skip(pageSize * (page - 1)).take(pageSize).getMany();
+    }
+    else {
+      return this.comment.createQueryBuilder('comment')
+        .leftJoinAndSelect('comment.user', 'user')
+        .getMany();
+    }
   }
 
   /**
@@ -34,7 +42,7 @@ export class CommentService {
    * @param userId 
    * @returns 
    */
-  findAllUser(userId:number){
+  findAllUser(userId: number) {
     return this.comment.createQueryBuilder().where('user_id = :userId', { userId }).getMany();
   }
 
@@ -43,8 +51,9 @@ export class CommentService {
    * @param garbageId 
    * @returns 
    */
-  findAllGarbage(garbageId:number){
-    return this.comment.createQueryBuilder().where('garbage_id = :garbageId', { garbageId }).getMany();
+  findAllGarbage(garbageId: number) {
+    return this.comment.createQueryBuilder('comment').leftJoinAndSelect('comment.user', 'user')
+    .where('garbage_id = :garbageId', { garbageId }).getMany();
   }
 
   /**
@@ -75,11 +84,11 @@ export class CommentService {
    * @param id 
    * @returns 
    */
-  findAverageScore(id:number){
+  findAverageScore(id: number) {
     return this.comment.createQueryBuilder()
-    .select('AVG(comment_score)', 'average_score')
-    .where('garbage_id = :id', { id })
-    .groupBy('garbage_id').getRawOne()
+      .select('AVG(comment_score)', 'average_score')
+      .where('garbage_id = :id', { id })
+      .groupBy('garbage_id').getRawOne()
   }
 
   /**
@@ -126,7 +135,7 @@ export class CommentService {
    * @returns 
    */
   getTotal(id?: number) {
-    if (id) { 
+    if (id) {
       return this.comment.createQueryBuilder().where('garbage_id = :id', { id }).getCount()
     }
     else {
@@ -138,12 +147,12 @@ export class CommentService {
    * 根据废品分类的评论依次统计评论总数
    * @returns 
    */
-  getCategoryCommentTotals(){
+  getCategoryCommentTotals() {
     return this.comment.createQueryBuilder('comment')
       .leftJoinAndSelect('comment.garbage', 'garbage')
       .leftJoinAndSelect('garbage.category', 'category')
-      .select('COUNT(*)','total')
-      .addSelect('category.categoryName','categoryName')
+      .select('COUNT(*)', 'total')
+      .addSelect('category.categoryName', 'categoryName')
       .groupBy('category.categoryId')
       .getRawMany();
   }
