@@ -25,8 +25,35 @@ export class CommentService {
    * @returns 
    */
   findAll(page: number, pageSize: number) {
-    if (page && pageSize) { return this.comment.createQueryBuilder().skip(pageSize * (page - 1)).take(pageSize).getMany(); }
-    else { return this.comment.createQueryBuilder().getMany(); }
+    if (page && pageSize) {
+      return this.comment.createQueryBuilder('comment')
+        .leftJoinAndSelect('comment.user', 'user')
+        .skip(pageSize * (page - 1)).take(pageSize).getMany();
+    }
+    else {
+      return this.comment.createQueryBuilder('comment')
+        .leftJoinAndSelect('comment.user', 'user')
+        .getMany();
+    }
+  }
+
+  /**
+   * 根据指定的用户id，获取其发送的所有评论
+   * @param userId 
+   * @returns 
+   */
+  findAllUser(userId: number) {
+    return this.comment.createQueryBuilder().where('user_id = :userId', { userId }).getMany();
+  }
+
+  /**
+   * 根据指定的废品id，获取其相关的所有评论
+   * @param garbageId 
+   * @returns 
+   */
+  findAllGarbage(garbageId: number) {
+    return this.comment.createQueryBuilder('comment').leftJoinAndSelect('comment.user', 'user')
+    .where('garbage_id = :garbageId', { garbageId }).getMany();
   }
 
   /**
@@ -49,6 +76,19 @@ export class CommentService {
   findNewAll(page: number, pageSize: number, id: number) {
     if (page && pageSize) { return this.comment.createQueryBuilder().skip(pageSize * (page - 1)).take(pageSize).where('garbage_id = :id', { id }).orderBy('comment_time', 'DESC').getMany(); }
     else { return this.comment.createQueryBuilder().where('garbage_id = :id', { id }).orderBy('comment_time', 'DESC').getMany(); }
+  }
+
+
+  /**
+   * 求指定废品id平均评分
+   * @param id 
+   * @returns 
+   */
+  findAverageScore(id: number) {
+    return this.comment.createQueryBuilder()
+      .select('AVG(comment_score)', 'average_score')
+      .where('garbage_id = :id', { id })
+      .groupBy('garbage_id').getRawOne()
   }
 
   /**
@@ -95,11 +135,25 @@ export class CommentService {
    * @returns 
    */
   getTotal(id?: number) {
-    if (id) { 
+    if (id) {
       return this.comment.createQueryBuilder().where('garbage_id = :id', { id }).getCount()
     }
     else {
       return this.comment.createQueryBuilder().getCount() // 获取总数量
     }
+  }
+
+  /**
+   * 根据废品分类的评论依次统计评论总数
+   * @returns 
+   */
+  getCategoryCommentTotals() {
+    return this.comment.createQueryBuilder('comment')
+      .leftJoinAndSelect('comment.garbage', 'garbage')
+      .leftJoinAndSelect('garbage.category', 'category')
+      .select('COUNT(*)', 'total')
+      .addSelect('category.categoryName', 'categoryName')
+      .groupBy('category.categoryId')
+      .getRawMany();
   }
 }

@@ -17,18 +17,18 @@ export class Order {
     @Column({ name: 'order_address' })
     orderAddress: string;
 
-    @Column({ name: 'order_money',type:'double' })
+    @Column({ name: 'order_money', type: 'double' })
     orderMoney: number;
 
-    @Column({name:'order_description'})
+    @Column({ name: 'order_description' })
     orderDescription: string;
 
-    @ManyToOne(() => User, user => user.deliveredOrders)
+    @ManyToOne(() => User, user => user.recipientOrders)
     Recipient: User
 
-    @ManyToOne(() => User,user => user.recipientOrders)
+    @ManyToOne(() => User, user => user.deliveredOrders, { nullable: true })
     Deliveryman: User
 
-    @OneToMany(()=>OrderToGarbage,orderToGarbage => orderToGarbage.order)
+    @OneToMany(() => OrderToGarbage, orderToGarbage => orderToGarbage.order)
     orderToGarbage: OrderToGarbage[] // 订单包含的垃圾列表
 }

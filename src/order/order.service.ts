@@ -19,7 +19,7 @@ export class OrderService {
     private garbageService: GarbageService,) { }
 
   /**
-   * 创建订单
+   * 创建购买订单
    * @param createOrderDto 
    * @param garbageItems 
    */
@@ -37,6 +37,15 @@ export class OrderService {
   }
 
   /**
+   * 创建回收订单
+   * @param createOrderDto 
+   * @returns 
+   */
+  async createRecover(createOrderDto: CreateOrderDto,){
+    return this.order.createQueryBuilder().insert().into(Order).values(createOrderDto).execute();
+  }
+
+  /**
    * 获取指定用户id的所有订单
    * @param userId 
    * @param userRank 
@@ -44,20 +53,33 @@ export class OrderService {
    * @param pageSize 
    * @returns 
    */
-  findUserAllOrder(userId: number, userRank: number, page: number, pageSize: number) {
+  findUserAllOrder(userId: number, userRank: number) {
     if (userRank === 0) {
       return this.order.createQueryBuilder('order')
-        .innerJoinAndSelect('order.orderToGarbage', 'orderToGarbage')
-        .innerJoinAndSelect('orderToGarbage.garbage', 'garbage')
+        .leftJoinAndSelect('order.orderToGarbage', 'orderToGarbage')
+        .leftJoinAndSelect('orderToGarbage.garbage', 'garbage')
+        .leftJoinAndSelect('garbage.pic', 'pic')
         .where('order.Recipient = :userId', { userId })
-        .skip((page - 1) * pageSize).take(pageSize).getMany();
+        .getMany();
     } else if (userRank === 1) {
       return this.order.createQueryBuilder('order')
-        .innerJoinAndSelect('order.orderToGarbage', 'orderToGarbage')
-        .innerJoinAndSelect('orderToGarbage.garbage', 'garbage')
+        .leftJoinAndSelect('order.orderToGarbage', 'orderToGarbage')
+        .leftJoinAndSelect('orderToGarbage.garbage', 'garbage')
+        .leftJoinAndSelect('garbage.pic', 'pic')
         .where('order.Deliveryman = :userId', { userId })
-        .skip((page - 1) * pageSize).take(pageSize).getMany();
+        .getMany();
     }
+  }
+
+  /**
+   * 获取所有配送者为空的订单
+   * @returns 
+   */
+  findNullDeliveryman(){
+    return this.order.createQueryBuilder('order')
+      .leftJoinAndSelect('order.Recipient', 'recipient')
+      .where('order.Deliveryman is null')
+      .getMany();
   }
 
   findOne(id: number) {

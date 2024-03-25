@@ -55,8 +55,8 @@ export class User {
     @JoinColumn({ name: "pic_id"})
     pic: Pic
 
-    @OneToOne(()=>Collection, collection => collection.user)
-    collection: Collection
+    @OneToMany(()=>Collection, collection => collection.user)
+    collections: Collection[]
 
     @OneToMany(() => Garbage, garbage => garbage.user)
     garbages: Garbage[]

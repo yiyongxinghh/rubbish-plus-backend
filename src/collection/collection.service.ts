@@ -28,12 +28,15 @@ export class CollectionService {
   }
 
   /**
-   * 根据用户id找到所有收藏夹
+   * 根据用户id找到所有收藏夹以及其中的所有收藏废品
    * @param userId 
    * @returns 
    */
   findAll(userId: number) {
-    return this.collection.createQueryBuilder().where('collection.user = :userId', { userId }).getMany();
+    return this.collection.createQueryBuilder('collection')
+    .leftJoinAndSelect('collection.collectionToGarbages', 'collectionToGarbages')
+    .leftJoinAndSelect('collectionToGarbages.garbage', 'garbage')
+    .where('collection.user = :userId', { userId }).getMany();
   }
 
   /**

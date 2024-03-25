@@ -32,6 +32,18 @@ export class CollectionToGarbageService {
       .getMany();
   }
 
+  /**
+   * 根据指定废品id，得到收藏总数
+   * @param garbageId 
+   * @returns 
+   */
+  findGarbageCount(garbageId: number) {
+    return this.collectionToGarbage.createQueryBuilder('collectionToGarbage')
+
+      .where('collectionToGarbage.garbage=:garbageId', { garbageId })
+      .getCount();
+  }
+
 
   /**
    * 根据指定的收藏夹id,删除其中的指定废品id

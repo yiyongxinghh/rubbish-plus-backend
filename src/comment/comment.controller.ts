@@ -2,6 +2,7 @@ import { Controller, Get, Post, Body, Patch, Param, Delete, Query } from '@nestj
 import { CommentService } from './comment.service';
 import { CreateCommentDto } from './dto/create-comment.dto';
 import { UpdateCommentDto } from './dto/update-comment.dto';
+import { Public } from '../common/public.decorator'
 
 @Controller('comment')
 export class CommentController {
@@ -31,6 +32,27 @@ export class CommentController {
   }
 
   /**
+   * GET 获取指定用户id，发送的所有评论
+   * @param userId 
+   * @returns 
+   */
+  @Get('/user')
+  findAllUser(@Query('userId') userId:number){
+    return this.commentService.findAllUser(userId)
+  }
+
+  /**
+   * GET 根据指定的废品id，获取其相关的所有评论
+   * @param garbageId 
+   * @returns 
+   */
+  @Public()
+  @Get('/garbage')
+  findAllGarbage(@Query('garbageId') garbageId:number){
+    return this.commentService.findAllGarbage(garbageId)
+  }
+
+  /**
    * 
    * @param query 
    * @returns 
@@ -56,7 +78,24 @@ export class CommentController {
     return { comments, total }
   }
 
+  /**
+   * GET 求指定废品id平均评分
+   * @param id 
+   * @returns 
+   */
+  @Get('/avg')
+  async findAverageScore(@Query('id') id: number) {
+    return this.commentService.findAverageScore(id);
+  }
 
+  /**
+   * GET 根据废品分类的评论依次统计评论总数
+   * @returns 
+   */
+  @Get('/total')
+  async getCategoryCommentTotals() {
+    return this.commentService.getCategoryCommentTotals();
+  }
 
   /**
    * POST 根据起始时间范围，获取区间所有评论

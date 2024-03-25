@@ -4,6 +4,7 @@ import { UpdateMessageDto } from './dto/update-message.dto';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Message } from './entities/message.entity';
 import { Repository } from 'typeorm';
+import GoEasy from 'goeasy'
 
 @Injectable()
 export class MessageService {
@@ -14,7 +15,7 @@ export class MessageService {
   }
 
   /**
-   * 根据用户自身id,查询受到的消息,自带分页
+   * 根据发送者id和接收者id,查询所有消息,自带分页
    * @param page 
    * @param pageSize 
    * @param userId 
@@ -59,6 +60,31 @@ export class MessageService {
         .orderBy('message.messageTime', 'ASC')
         .getRawMany();
     }
+  }
+
+  /**
+   * 通过指定用户id，获取所有与其聊天的用户
+   * @param userId 
+   * @returns 
+   */
+  findMessagesById(userId: number) {
+    return this.message.createQueryBuilder('message')
+      .leftJoinAndSelect('message.sender', 'sender')
+      .leftJoinAndSelect('message.recipient', 'recipient')
+      .select([
+        'sender.userId AS senderId',
+        'sender.userName AS senderName',
+        'recipient.userId AS recipientId',
+        'recipient.userName AS recipientName',
+        'message.messageId AS messageId',
+        'message.messageContent AS messageContent',
+        'message.messageTime AS messageTime',
+        'message.messageIsRead AS messageIsRead',
+      ])
+      .where('message.recipient = :userId', { userId })
+      .orWhere('message.sender = :userId', { userId })
+      .orderBy('message.messageTime', 'DESC')
+      .getRawMany();
   }
 
   /**

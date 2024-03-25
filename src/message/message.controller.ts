@@ -1,17 +1,26 @@
-import { Controller, Get, Post, Body, Patch, Param, Delete, Query } from '@nestjs/common';
+import { Controller, Get, Post, Body, Patch, Param, Delete, Query, Req, Res } from '@nestjs/common';
 import { MessageService } from './message.service';
 import { CreateMessageDto } from './dto/create-message.dto';
 import { UpdateMessageDto } from './dto/update-message.dto';
+import { GoEasyHttpService } from '../events/goeasy.message'
+import * as dayjs from 'dayjs';
 
 @Controller('message')
 export class MessageController {
-  constructor(private readonly messageService: MessageService) { }
+  constructor(private readonly messageService: MessageService, private readonly goEasyHttpService: GoEasyHttpService) { }
 
   @Post()
-  create(@Body() createMessageDto: CreateMessageDto) {
-    return this.messageService.create(createMessageDto);
+  async create(@Query('channel') channel:string,@Body() createMessageDto: CreateMessageDto) {
+    console.log(channel,createMessageDto);
+    const data = await this.messageService.create(createMessageDto);
+    return await this.goEasyHttpService.sendMessage(channel,createMessageDto.messageContent,data)
   }
 
+  /**
+   * GET 根据发送者id和接收者id,查询所有消息,自带分页
+   * @param query 
+   * @returns 
+   */
   @Get()
   async findAll(@Query() query: { page: number, pageSize: number, senderId: number, recipientId: number }) {
     const { page, pageSize, senderId, recipientId } = query
@@ -46,6 +55,31 @@ export class MessageController {
     });
     const total = await this.messageService.getTotal()
     return { groupedMessages, total }
+  }
+
+  /**
+   * GET 根据用户id获取所有聊天信息列表
+   * @param id 
+   * @returns 
+   */
+  @Get('/user')
+  async findByUserId(@Query('userId') id: number) {
+    const messages = await this.messageService.findMessagesById(id);
+    const groupedMessages = [];
+    messages.forEach((item) => {
+      const existingGroup = groupedMessages.find((group) => {
+        return group.userName.includes(item.senderName) && group.userName.includes(item.recipientName);
+      });
+      if (!existingGroup) {
+        groupedMessages.push({
+          userName: [item.senderName, item.recipientName],
+          userId: [item.senderId, item.recipientId],
+          message: item.messageContent,
+          time: dayjs(item.messageTime).format('YYYY-MM-DD')
+        })
+      }
+    })
+    return groupedMessages
   }
 
   @Post('time')

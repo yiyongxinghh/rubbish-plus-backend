@@ -4,6 +4,7 @@ import { CreateGarbageDto } from './dto/create-garbage.dto';
 import { UpdateGarbageDto } from './dto/update-garbage.dto';
 import { OrderToGarbageService } from 'src/order-to-garbage/order-to-garbage.service';
 import * as dayjs from 'dayjs'
+import { Public } from 'src/common/public.decorator';
 
 @Controller('garbage')
 export class GarbageController {
@@ -21,6 +22,12 @@ export class GarbageController {
     return this.garbageService.create(createGarbageDto);
   }
 
+  /**
+   * GET 获取所有废品，自带分页
+   * @param query 
+   * @returns 
+   */
+  @Public()
   @Get()
   async findAll(@Query() query: { page: number, pageSize: number }) {
     const { page, pageSize } = query
@@ -29,6 +36,12 @@ export class GarbageController {
     return { total, garbages }
   }
 
+  /**
+   * GET 根据具体分类获取该类的所有废品
+   * @param id 
+   * @returns 
+   */
+  @Public()
   @Get('getTypeGarbage')
   async getTypeGarbage(@Query('id') id: number) {
     const rawGarbages = await this.garbageService.getTypeGarbage(id);
@@ -44,15 +57,22 @@ export class GarbageController {
   }
 
   /**
- * 获取即将售空废品
- * @returns 
- */
+   * 获取即将售空废品
+   * @returns 
+   */
+  @Public()
   @Get('soldOut')
   async getSoldOutGarbage() {
     const garbages = await this.garbageService.getSoldOutGarbage();
     return garbages.slice(0, 8)
   }
 
+  /**
+   * GET 获取指定废品
+   * @param id 
+   * @returns 
+   */
+  @Public()
   @Get(':id')
   findOne(@Param('id') id: string) {
     return this.garbageService.findOne(+id);
@@ -148,6 +168,7 @@ export class GarbageController {
    * POST 获取热门废品
    * @returns 
    */
+  @Public()
   @Post('hot')
   async findHotGarbageQuantity() {
     const garbages = await this.garbageService.getHotGarbage();
