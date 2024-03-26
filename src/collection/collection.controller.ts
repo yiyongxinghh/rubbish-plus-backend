@@ -17,6 +17,11 @@ export class CollectionController {
     return this.collectionService.create(createCollectionDto);
   }
 
+  /**
+   * GET 根据指定收藏夹名称获取指定收藏夹
+   * @param collectionName 
+   * @returns 
+   */
   @Get('/findNameOne')
   findNameOne(@Query('collectionName') collectionName: string){
     return this.collectionService.findNameOne(collectionName);
