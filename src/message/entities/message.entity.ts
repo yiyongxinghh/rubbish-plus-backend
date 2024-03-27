@@ -15,7 +15,7 @@ export class Message {
     @Column({ name: 'message_is_read', type: 'boolean', default: false })
     messageIsRead: boolean;
 
-    @ManyToOne(() => User, user => user.sentMessages)
+    @ManyToOne(() => User, user => user.sendMessages)
     sender: User;
 
     @ManyToOne(() => User, user => user.receivedMessages)

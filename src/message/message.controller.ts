@@ -9,6 +9,12 @@ import * as dayjs from 'dayjs';
 export class MessageController {
   constructor(private readonly messageService: MessageService, private readonly goEasyHttpService: GoEasyHttpService) { }
 
+  /**
+   * POST 创建消息
+   * @param channel 
+   * @param createMessageDto 
+   * @returns 
+   */
   @Post()
   async create(@Query('channel') channel:string,@Body() createMessageDto: CreateMessageDto) {
     console.log(channel,createMessageDto);
@@ -82,27 +88,52 @@ export class MessageController {
     return groupedMessages
   }
 
+  /**
+   * POST 根据起止时间获取期间的消息
+   * @param date 
+   * @returns 
+   */
   @Post('time')
   findTimed(@Body() date: { start: Date, end: Date }) {
     const { start, end } = date
     return this.messageService.findTimed(start, end);
   }
 
+  /**
+   * POST 最新的五条消息
+   * @returns 
+   */
   @Post('topFive')
   findTopFive() {
     return this.messageService.findTopFive();
   }
 
+  /**
+   * GET 根据id获取消息
+   * @param id 
+   * @returns 
+   */
   @Get(':id')
   findOne(@Param('id') id: string) {
     return this.messageService.findOne(+id);
   }
 
+  /**
+   * PATCH 更新消息
+   * @param id 
+   * @param updateMessageDto 
+   * @returns 
+   */
   @Patch(':id')
   update(@Param('id') id: string, @Body() updateMessageDto: UpdateMessageDto) {
     return this.messageService.update(+id, updateMessageDto);
   }
 
+  /**
+   * DELETE 删除消息
+   * @param id 
+   * @returns 
+   */
   @Delete(':id')
   remove(@Param('id') id: string) {
     return this.messageService.remove(+id);

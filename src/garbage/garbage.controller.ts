@@ -78,20 +78,21 @@ export class GarbageController {
     return this.garbageService.findOne(+id);
   }
 
+  /**
+   * PATCH 根据指定id更新指定废品
+   * @param id 
+   * @param updateGarbageDto 
+   * @returns 
+   */
   @Patch(':id')
   update(@Param('id') id: string, @Body() updateGarbageDto: UpdateGarbageDto) {
     return this.garbageService.update(+id, updateGarbageDto);
   }
 
-  @Delete(':id')
-  remove(@Param('id') id: string) {
-    return this.garbageService.remove(+id);
-  }
-
   /**
-   * 依次删除所有相关订单和相关废品
-   * @param ids 
-   */
+ * DELETE　依次删除所有相关订单和相关废品
+ * @param ids 
+ */
   @Delete('')
   async removeBatch(@Body('ids') ids: string[]) {
     await this.orderToGarbageService.deleteIds(ids)
@@ -99,7 +100,18 @@ export class GarbageController {
   }
 
   /**
-   * 判断垃圾是否存在订单
+   * DELETE　根据指定id删除指定废品
+   * @param id 
+   * @returns 
+   */
+  @Delete(':id')
+  remove(@Param('id') id: string) {
+    return this.garbageService.remove(+id);
+  }
+
+
+  /**
+   * POST 判断垃圾是否存在订单
    * @param ids 
    * @returns 
    */
@@ -182,7 +194,7 @@ export class GarbageController {
 
 
   /**
-   * 根据具体分类分组
+   * POST 根据具体分类分组
    * @returns 
    */
   @Post('groupByGarbage')

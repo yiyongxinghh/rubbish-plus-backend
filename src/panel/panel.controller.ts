@@ -5,6 +5,10 @@ import { Public } from '../common/public.decorator';
 export class PanelController {
   constructor(private readonly panelService: PanelService) {}
 
+  /**
+   * POST 获取所有面板信息
+   * @returns 
+   */
   @Public()
   @Post()
   getPanelList () {

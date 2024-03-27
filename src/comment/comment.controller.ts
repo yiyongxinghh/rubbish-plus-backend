@@ -53,7 +53,7 @@ export class CommentController {
   }
 
   /**
-   * 
+   * GET 获取所有按热度排行的评论
    * @param query 
    * @returns 
    */
@@ -66,7 +66,7 @@ export class CommentController {
   }
 
   /**
-   * 
+   * GET 获取所有按最新排行的评论
    * @param query 
    * @returns 
    */

@@ -65,7 +65,7 @@ export class User {
     comments: Comment[]
 
     @OneToMany(() => Message, message => message.sender)
-    sentMessages: Message[];
+    sendMessages: Message[];
 
     @OneToMany(() => Message, message => message.recipient)
     receivedMessages: Message[];

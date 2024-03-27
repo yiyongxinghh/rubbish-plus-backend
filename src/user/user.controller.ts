@@ -16,6 +16,11 @@ import { CodeService } from 'src/code/code.service';
 export class UserController {
   constructor(private readonly userService: UserService, private jwtService: JwtService, private mailService: MailService, private codeService: CodeService) { }
 
+  /**
+   * POST 创建用户
+   * @param createUserDto 
+   * @returns 
+   */
   @Post()
   @Public()
   async create(@Body() createUserDto: CreateUserDto) {
@@ -29,7 +34,7 @@ export class UserController {
   }
 
   /**
-   * 获取除了指定id以外的所有数据
+   * GET 获取所有用户数据，自带分页
    * @param query 
    * @returns 
    */
@@ -42,11 +47,24 @@ export class UserController {
     return { total, users }
   }
 
+  /**
+   * GET 获取指定id的用户数据
+   * @param id 
+   * @returns 
+   */
   @Get(':id')
   findOne(@Param('id') id: string) {
     return this.userService.findOne(+id);
   }
 
+  /**
+   * PATCH 修改指定id的用户数据
+   * 可以通过指定字段做单一修改
+   * @param id 
+   * @param updateUserDto 
+   * @param field 
+   * @returns 
+   */
   @Patch(':id')
   async update(@Param('id') id: string, @Body('user') updateUserDto: UpdateUserDto, @Body('field') field?: string) {
     if (field) {
@@ -65,11 +83,21 @@ export class UserController {
 
   }
 
+  /**
+   * DELETE 删除指定id的用户数据
+   * @param id 
+   * @returns 
+   */
   @Delete(':id')
   remove(@Param('id') id: string) {
     return this.userService.remove(+id);
   }
 
+  /**
+   * POST 用户登录
+   * @param createUserDto 
+   * @returns 
+   */
   @Post('login')
   @Public()
   async login(@Body() createUserDto: CreateUserDto) {
@@ -83,6 +111,12 @@ export class UserController {
     }
   }
 
+  /**
+   * POST 用户登验证码录
+   * @param userEmail 
+   * @param codeVerification 
+   * @returns 
+   */
   @Post('codeLogin')
   @Public()
   async codeLogin(@Body('userEmail') userEmail: string, @Body('codeVerification') codeVerification: string) {
@@ -98,6 +132,11 @@ export class UserController {
     }
   }
 
+  /**
+   * POST 发送验证码
+   * @param userEmail 
+   * @returns 
+   */
   @Post('email')
   @Public()
   async email(@Body('userEmail') userEmail: string) {
@@ -114,11 +153,21 @@ export class UserController {
     }
   }
 
+  /**
+   * DELETE 批量删除
+   * @param ids 
+   * @returns 
+   */
   @Delete('')
   removeBatch(@Body('ids') ids: string[]) {
     return this.userService.deleteBatch(ids);
   }
 
+  /**
+   * POST 修改指定id的用户数据
+   * @param updateData 
+   * @returns 
+   */
   @Post('updateOne')
   async updateOne(@Body('updateData') updateData: { data: string, userId: number, type: string, userOldPass?: string }) {
     console.log(updateData);
@@ -138,6 +187,10 @@ export class UserController {
     }
   }
 
+  /**
+   * POST 获取分级用户数据
+   * @returns 
+   */
   @Post('groupUser')
   async groupUser() {
     const group = await this.userService.groupByUser()

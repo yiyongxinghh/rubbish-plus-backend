@@ -39,6 +39,12 @@ export class PicController {
     return { total, pics }
   }
 
+  /**
+   * PATCH 根据指定id更新图片
+   * @param file 
+   * @param id 
+   * @returns 
+   */
   @Patch(':id')
   @UseInterceptors(FileInterceptor('file'))
   async update(@UploadedFile() file, @Param('id') id: number) {

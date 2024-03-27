@@ -38,7 +38,12 @@ export class CollectionToGarbageController {
   }
 
 
-
+  /**
+   * PATCH 根据指定id更新收藏夹中废品信息
+   * @param id 
+   * @param updateCollectionToGarbageDto 
+   * @returns 
+   */
   @Patch(':id')
   update(@Param('id') id: string, @Body() updateCollectionToGarbageDto: UpdateCollectionToGarbageDto) {
     return this.collectionToGarbageService.update(+id, updateCollectionToGarbageDto);
