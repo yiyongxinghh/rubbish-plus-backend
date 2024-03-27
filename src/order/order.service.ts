@@ -83,18 +83,38 @@ export class OrderService {
       .getMany();
   }
 
+  /**
+   * 根据订单id获取订单信息
+   * @param id 
+   * @returns 
+   */
   findOne(id: number) {
     return this.order.createQueryBuilder().where("order_id = :id", { id }).getOne();
   }
 
+  /**
+   * 根据订单id修改订单信息
+   * @param id 
+   * @param updateOrderDto 
+   * @returns 
+   */
   update(id: number, updateOrderDto: UpdateOrderDto) {
     return this.order.createQueryBuilder().update(Order).set(updateOrderDto).where("order_id = :id", { id }).execute();
   }
 
+  /**
+   * 根据订单id删除订单
+   * @param id 
+   * @returns 
+   */
   remove(id: number) {
     return `This action removes a #${id} order`;
   }
 
+  /**
+   * 获取总数量
+   * @returns 
+   */
   getTotal() {
     return this.order.createQueryBuilder().getCount() // 获取总数量
   }

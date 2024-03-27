@@ -9,6 +9,11 @@ import { Repository } from 'typeorm';
 export class MessageService {
   constructor(@InjectRepository(Message) private readonly message: Repository<Message>) { }
 
+  /**
+   * 创建消息
+   * @param createMessageDto 
+   * @returns 
+   */
   create(createMessageDto: CreateMessageDto) {
     return this.message.save(createMessageDto);
   }
@@ -106,18 +111,38 @@ export class MessageService {
       .orderBy('message_time', 'DESC').limit(5).getMany();
   }
 
+  /**
+   * 根据指定消息id,查询消息
+   * @param id 
+   * @returns 
+   */
   findOne(id: number) {
     return `This action returns a #${id} message`;
   }
 
+  /**
+   * 根据指定消息id,更新消息
+   * @param id 
+   * @param updateMessageDto 
+   * @returns 
+   */
   update(id: number, updateMessageDto: UpdateMessageDto) {
     return `This action updates a #${id} message`;
   }
 
+  /**
+   * 根据指定消息id,删除消息
+   * @param id 
+   * @returns 
+   */
   remove(id: number) {
     return `This action removes a #${id} message`;
   }
 
+  /**
+   * 获取总数量
+   * @returns 
+   */
   getTotal() {
     return this.message.createQueryBuilder().getCount() // 获取总数量
   }

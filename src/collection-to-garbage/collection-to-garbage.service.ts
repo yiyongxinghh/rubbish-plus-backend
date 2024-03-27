@@ -44,6 +44,12 @@ export class CollectionToGarbageService {
       .getCount();
   }
 
+  /**
+   * 根据指定的收藏夹id,更新其中的指定废品id
+   * @param id 
+   * @param updateCollectionToGarbageDto 
+   * @returns 
+   */
   update(id:number,updateCollectionToGarbageDto:UpdateCollectionToGarbageDto){
     return this.collectionToGarbage.createQueryBuilder().update(CollectionToGarbage)
     .set(updateCollectionToGarbageDto).where('collection_to_garbage_id=:id',{id})
