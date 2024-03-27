@@ -144,4 +144,5 @@ export class UserController {
     const total = await this.userService.getTotal();
     return { group, total }
   }
+
 }

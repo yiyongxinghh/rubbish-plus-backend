@@ -6,6 +6,7 @@ import { Repository } from 'typeorm';
 import { Order } from './entities/order.entity';
 import { OrderToGarbage } from 'src/order-to-garbage/entities/order-to-garbage.entity';
 import { GarbageService } from 'src/garbage/garbage.service';
+import { UserService } from 'src/user/user.service';
 
 interface GarbageItem {
   id: number;
@@ -16,7 +17,7 @@ interface GarbageItem {
 export class OrderService {
   constructor(@InjectRepository(Order) private readonly order: Repository<Order>,
     @InjectRepository(OrderToGarbage) private readonly orderToGarbage: Repository<OrderToGarbage>,
-    private garbageService: GarbageService,) { }
+    private garbageService: GarbageService,private userService: UserService,) { }
 
   /**
    * 创建购买订单
@@ -97,4 +98,6 @@ export class OrderService {
   getTotal() {
     return this.order.createQueryBuilder().getCount() // 获取总数量
   }
+
+
 }

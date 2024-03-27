@@ -3,6 +3,7 @@ import { OrderService } from './order.service';
 import { CreateOrderDto } from './dto/create-order.dto';
 import { UpdateOrderDto } from './dto/update-order.dto';
 import { GarbageService } from 'src/garbage/garbage.service';
+import { UserService } from 'src/user/user.service';
 
 interface GarbageItem {
   id: number;
@@ -11,7 +12,7 @@ interface GarbageItem {
 
 @Controller('order')
 export class OrderController {
-  constructor(private readonly orderService: OrderService, private readonly garbageService: GarbageService,) { }
+  constructor(private readonly orderService: OrderService, private readonly garbageService: GarbageService, private userService: UserService,) { }
 
   /**
    * POST 创建购买订单
@@ -20,8 +21,23 @@ export class OrderController {
    * @returns 
    */
   @Post()
-  async create(@Body('order') createOrderDto: CreateOrderDto, @Body('garbage') garbageItems: GarbageItem[]) {
-    return this.orderService.create(createOrderDto, garbageItems);
+  async create(@Body('order') createOrderDto, @Body('garbage') garbageItems: GarbageItem[]) {
+    const user = await this.userService.findOne(createOrderDto.Recipient);
+    garbageItems.forEach(async (item) => {
+      const garbgae = await this.garbageService.findOne(item.id)
+      if(garbgae.garbageAmount - item.quantity < 0){
+        return '库存不足';
+      }
+      garbgae.garbageAmount = garbgae.garbageAmount - item.quantity;
+      await this.garbageService.update(item.id, garbgae);
+    })
+    if (user.userAmount - createOrderDto.orderMoney < 0) {
+      return '余额不足';
+    } else {
+      user.userAmount = user.userAmount - createOrderDto.orderMoney;
+      await this.userService.update(createOrderDto.Recipient, user);
+      return this.orderService.create(createOrderDto, garbageItems);
+    }
   }
 
   /**
@@ -41,8 +57,8 @@ export class OrderController {
    * @returns 
    */
   @Post('findUserAllOrder')
-  findUserAllOrder(@Body() body: { userId: number, userRank: number}) {
-    const { userId, userRank} = body
+  findUserAllOrder(@Body() body: { userId: number, userRank: number }) {
+    const { userId, userRank } = body
     return this.orderService.findUserAllOrder(userId, userRank);
   }
 
@@ -60,7 +76,7 @@ export class OrderController {
    * @returns 
    */
   @Get('nullDeliveryman')
-  findNullDeliveryman(){
+  findNullDeliveryman() {
     return this.orderService.findNullDeliveryman();
   }
 
