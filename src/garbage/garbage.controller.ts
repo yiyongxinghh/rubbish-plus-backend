@@ -56,6 +56,18 @@ export class GarbageController {
     return groupedArray;
   }
 
+
+  /**
+   * GET 根据垃圾名称模糊查询
+   * @param name 
+   * @returns 
+   */
+  @Public()
+  @Get('name')
+  getNameGarbage(@Query('name') name:string){
+    return this.garbageService.getNameGarbage(name);
+  }
+
   /**
    * 获取即将售空废品
    * @returns 

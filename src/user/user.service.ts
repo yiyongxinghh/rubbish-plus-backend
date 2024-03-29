@@ -63,7 +63,9 @@ export class UserService {
         .where('user_id <> :id', { id })
         .take(pageSize).getMany();
     } else {
-      return this.user.createQueryBuilder().getMany();
+      return this.user.createQueryBuilder('user')
+      .leftJoinAndSelect('user.pic', 'pic')
+      .getMany();
     }
   }
 
@@ -73,7 +75,9 @@ export class UserService {
    * @returns 
    */
   findOne(id: number) {
-    return this.user.createQueryBuilder().where("user_id = :id", { id }).getOne();
+    return this.user.createQueryBuilder("user")
+    .leftJoinAndSelect("user.pic", "pic")
+    .where("user_id = :id", { id }).getOne();
   }
 
   /**
@@ -174,5 +178,17 @@ export class UserService {
    */
   groupByUser() {
     return this.user.createQueryBuilder().select('user_rank', 'userRank').addSelect('COUNT(*)', 'count').groupBy("user_rank").getRawMany();
+  }
+
+  /**
+   * 获取用户和垃圾的关联表
+   * @returns 
+   */
+  getUserGarbgae(){
+    return this.user.createQueryBuilder('user')
+      .leftJoinAndSelect('user.pic', 'pic')
+      .leftJoinAndSelect('user.garbages', 'garbages')
+      .leftJoinAndSelect('garbages.pic', 'garbagesPic')
+      .getMany()
   }
 }

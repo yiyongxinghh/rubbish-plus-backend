@@ -183,4 +183,17 @@ export class GarbageService {
       .where('garbage.category = :id', { id })
       .getMany()
   }
+
+  /**
+   * 模糊查询
+   * @param name 
+   * @returns 
+   */
+  getNameGarbage(name: string) {
+    return this.garbage.createQueryBuilder('garbage')
+      .leftJoinAndSelect('garbage.pic', 'garbagePic')
+      .where('garbage.garbageName LIKE :name', { name: `%${name}%` })
+      .getMany();
+  }
+  
 }

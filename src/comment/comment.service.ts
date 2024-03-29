@@ -43,7 +43,12 @@ export class CommentService {
    * @returns 
    */
   findAllUser(userId: number) {
-    return this.comment.createQueryBuilder().where('user_id = :userId', { userId }).getMany();
+    return this.comment.createQueryBuilder('comment')
+    .leftJoinAndSelect('comment.user', 'user')
+    .leftJoinAndSelect('comment.garbage', 'garbage')
+    .leftJoinAndSelect('user.pic', 'pic')
+    .where('comment.user= :userId', { userId })
+    .getMany();
   }
 
   /**
@@ -52,7 +57,9 @@ export class CommentService {
    * @returns 
    */
   findAllGarbage(garbageId: number) {
-    return this.comment.createQueryBuilder('comment').leftJoinAndSelect('comment.user', 'user')
+    return this.comment.createQueryBuilder('comment')
+    .leftJoinAndSelect('comment.user', 'user')
+    .leftJoinAndSelect('user.pic', 'pic')
     .where('garbage_id = :garbageId', { garbageId }).getMany();
   }
 
@@ -107,7 +114,7 @@ export class CommentService {
    * @returns 
    */
   findOne(id: number) {
-    return this.comment.createQueryBuilder().where("comment.id = :id", { id }).getOne();
+    return this.comment.createQueryBuilder().where("comment_id = :id", { id }).getOne();
   }
 
   /**
@@ -117,7 +124,7 @@ export class CommentService {
    * @returns 
    */
   update(id: number, updateCommentDto: UpdateCommentDto) {
-    return this.comment.createQueryBuilder().update(Comment).set(updateCommentDto).where("comment.id = :id", { id }).execute();
+    return this.comment.createQueryBuilder().update(Comment).set(updateCommentDto).where("comment_id = :id", { id }).execute();
   }
 
   /**
@@ -126,7 +133,7 @@ export class CommentService {
    * @returns 
    */
   remove(id: number) {
-    return this.comment.createQueryBuilder().delete().from(Comment).where("comment.id = :id", { id }).execute();
+    return this.comment.createQueryBuilder().delete().from(Comment).where("comment_id = :id", { id }).execute();
   }
 
   /**

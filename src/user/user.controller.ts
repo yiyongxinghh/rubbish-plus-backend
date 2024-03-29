@@ -48,6 +48,16 @@ export class UserController {
   }
 
   /**
+   * GET 获取所有用户废品数据
+   * @returns 
+   */
+  @Public()
+  @Get('getUserGarbage')
+  getUserGarbgae(){
+    return this.userService.getUserGarbgae();
+  }
+
+  /**
    * GET 获取指定id的用户数据
    * @param id 
    * @returns 
@@ -69,7 +79,6 @@ export class UserController {
   async update(@Param('id') id: string, @Body('user') updateUserDto: UpdateUserDto, @Body('field') field?: string) {
     if (field) {
       await this.userService.update(+id, updateUserDto, field)
-      console.log(1);
       return { message: '修改成功' }
     } else {
       updateUserDto.userPass = await bcrypt.hash(updateUserDto.userPass, salt.saltRounds);
