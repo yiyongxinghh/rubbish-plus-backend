@@ -1,10 +1,10 @@
 import { Module } from '@nestjs/common';
 import { UserService } from './user.service';
 import { UserController } from './user.controller';
-import { TypeOrmModule } from '@nestjs/typeorm'
+import { TypeOrmModule } from '@nestjs/typeorm';
 import { User } from './entities/user.entity';
 import { JwtModule } from '@nestjs/jwt';
-import { MailService } from 'src/service/mail-service'; 
+import { MailService } from 'src/service/mail-service';
 import { CodeModule } from 'src/code/code.module';
 
 @Module({
@@ -15,10 +15,10 @@ import { CodeModule } from 'src/code/code.module';
       secret: '老子的密钥',
       signOptions: { expiresIn: '24h' },
     }),
-    CodeModule
+    CodeModule,
   ],
   controllers: [UserController],
-  providers: [UserService,MailService],
-  exports: [UserService]
+  providers: [UserService, MailService],
+  exports: [UserService],
 })
-export class UserModule { }
+export class UserModule {}

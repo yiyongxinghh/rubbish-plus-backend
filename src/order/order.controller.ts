@@ -1,4 +1,12 @@
-import { Controller, Get, Post, Body, Patch, Param, Delete } from '@nestjs/common';
+import {
+  Controller,
+  Get,
+  Post,
+  Body,
+  Patch,
+  Param,
+  Delete,
+} from '@nestjs/common';
 import { OrderService } from './order.service';
 import { CreateOrderDto } from './dto/create-order.dto';
 import { UpdateOrderDto } from './dto/update-order.dto';
@@ -12,25 +20,32 @@ interface GarbageItem {
 
 @Controller('order')
 export class OrderController {
-  constructor(private readonly orderService: OrderService, private readonly garbageService: GarbageService, private userService: UserService,) { }
+  constructor(
+    private readonly orderService: OrderService,
+    private readonly garbageService: GarbageService,
+    private userService: UserService,
+  ) {}
 
   /**
    * POST 创建购买订单
-   * @param createOrderDto 
-   * @param garbageItems 
-   * @returns 
+   * @param createOrderDto
+   * @param garbageItems
+   * @returns
    */
   @Post()
-  async create(@Body('order') createOrderDto, @Body('garbage') garbageItems: GarbageItem[]) {
+  async create(
+    @Body('order') createOrderDto,
+    @Body('garbage') garbageItems: GarbageItem[],
+  ) {
     const user = await this.userService.findOne(createOrderDto.Recipient);
     garbageItems.forEach(async (item) => {
-      const garbgae = await this.garbageService.findOne(item.id)
-      if(garbgae.garbageAmount - item.quantity < 0){
+      const garbgae = await this.garbageService.findOne(item.id);
+      if (garbgae.garbageAmount - item.quantity < 0) {
         return '库存不足';
       }
       garbgae.garbageAmount = garbgae.garbageAmount - item.quantity;
       await this.garbageService.update(item.id, garbgae);
-    })
+    });
     if (user.userAmount - createOrderDto.orderMoney < 0) {
       return '余额不足';
     } else {
@@ -42,8 +57,8 @@ export class OrderController {
 
   /**
    * POST 创建回收订单
-   * @param createOrderDto 
-   * @returns 
+   * @param createOrderDto
+   * @returns
    */
   @Post('/recover')
   async createRecover(@Body() createOrderDto: CreateOrderDto) {
@@ -53,18 +68,18 @@ export class OrderController {
 
   /**
    * POST 获取用户所有订单，自带分页
-   * @param body 
-   * @returns 
+   * @param body
+   * @returns
    */
   @Post('findUserAllOrder')
-  findUserAllOrder(@Body() body: { userId: number, userRank: number }) {
-    const { userId, userRank } = body
+  findUserAllOrder(@Body() body: { userId: number; userRank: number }) {
+    const { userId, userRank } = body;
     return this.orderService.findUserAllOrder(userId, userRank);
   }
 
   /**
    * GET 获取订单总数量
-   * @returns 
+   * @returns
    */
   @Get('count')
   getTotal() {
@@ -73,7 +88,7 @@ export class OrderController {
 
   /**
    * GET 获取所有配送者为空的订单
-   * @returns 
+   * @returns
    */
   @Get('nullDeliveryman')
   findNullDeliveryman() {
@@ -82,8 +97,8 @@ export class OrderController {
 
   /**
    * GET 获取指定订单
-   * @param id 
-   * @returns 
+   * @param id
+   * @returns
    */
   @Get(':id')
   findOne(@Param('id') id: string) {
@@ -92,9 +107,9 @@ export class OrderController {
 
   /**
    * PATCH 更新订单状态
-   * @param id 
-   * @param updateOrderDto 
-   * @returns 
+   * @param id
+   * @param updateOrderDto
+   * @returns
    */
   @Patch(':id')
   update(@Param('id') id: string, @Body() updateOrderDto: UpdateOrderDto) {
@@ -103,8 +118,8 @@ export class OrderController {
 
   /**
    * DELETE 删除订单
-   * @param id 
-   * @returns 
+   * @param id
+   * @returns
    */
   @Delete(':id')
   remove(@Param('id') id: string) {
